@@ -96,8 +96,3 @@ This workflow supports real business programs such as:
 - KMeans clustering + StandardScaler  
 - Logistic Regression (interpretable classification)  
 - Model interpretation via coefficients  
-
----
-
-## Author  
-Jihoo Lee — Data Analytics Portfolio Project

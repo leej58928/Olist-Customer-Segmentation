@@ -1,98 +1,127 @@
 # Olist Customer Segmentation & High-Value Customer Prediction (RFM)
 
-## Overview  
-This project turns raw multi-table Olist e-commerce transactions into actionable customer segments and a simple, interpretable model that identifies high-value customers.
+## Key Results
 
-Instead of treating all customers as homogeneous, the workflow uses RFM features (Recency, Frequency, Monetary) to uncover behavioral segments and translate them into business decision signals.
-
-The notebook follows a narrative format:  
-**Question → Method → Output → Interpretation → Next Step**
+- Customer value is highly skewed: most customers purchase once, while a small segment drives disproportionate revenue  
+- RFM-based clustering reveals distinct segments (high-spend, repeat buyers, dormant users) with different business strategies  
+- An interpretable model shows that **monetary is the dominant driver of high-value customers**, with recency and frequency adding supporting signals  
 
 ---
 
-## Business Framing  
-In marketplaces like Olist, customer value is typically imbalanced:
-- most customers purchase once and never return  
-- a small minority contributes disproportionate revenue  
+## Business Question
 
-This means growth and retention strategy should focus on:
-1) identifying high-value customers early  
-2) protecting high-spend revenue segments  
-3) designing cluster-specific marketing and CX programs  
+How can we identify high-value customers and segment the customer base to support targeted marketing and retention strategies?
 
 ---
 
-## Objective  
-1. Build an analysis-ready dataset from raw Olist tables (orders, payments, customers)  
-2. Engineer customer-level RFM features  
-3. Segment customers using clustering to uncover natural behavior groups  
-4. Define a “high-value customer” segment  
-5. Train an interpretable model (Logistic Regression) to predict high-value customers using RFM signals  
+## What This Solves
+
+In e-commerce marketplaces, customer value is not evenly distributed:
+
+- most customers purchase once and do not return  
+- a small minority contributes a large share of total revenue  
+
+This creates a need to:
+
+- identify high-value customers early  
+- protect high-revenue segments  
+- design segment-specific retention and marketing strategies  
 
 ---
 
-## Dataset & Preparation  
-Raw Olist data is distributed across multiple tables.  
-This project builds a clean order-level table by:
-- filtering delivered orders only  
-- aggregating payment records per order to avoid double counting  
-- joining customer identifiers  
+## Approach
+
+This project transforms raw multi-table transaction data into customer-level insights:
+
+1. **Build an order-level dataset**
+   - filter to delivered orders  
+   - aggregate payments per order (avoid double counting)  
+   - join customer identifiers  
+
+2. **Engineer RFM features (Recency, Frequency, Monetary)**
+   - recency_days  
+   - number of orders  
+   - total spend  
+
+3. **Segment customers using KMeans clustering**
+   - standardize features  
+   - identify natural behavioral groups  
+
+4. **Define and model high-value customers**
+   - label the highest-value segment  
+   - train logistic regression for interpretable classification  
 
 ---
 
-## Analytical Approach  
+## Segmentation Results
 
-### 1) RFM Feature Engineering  
-Customer-level features:
-- **Recency**: days since last purchase  
-- **Frequency**: number of unique orders  
-- **Monetary**: total spend  
+Clustering reveals distinct customer segments:
 
-A reference date (day after the most recent purchase) is used for consistent recency calculation.
+- **High-Monetary Segment (High-Value Customers)**  
+  - very high spend (~$1,161 avg)  
+  - low purchase frequency  
+  → high-ticket buyers  
 
----
+- **Repeat Buyers**  
+  - higher frequency (~2.1 orders)  
+  - moderate spend (~$290)  
+  → recurring customers  
 
-### 2) Customer Segmentation (KMeans Clustering)  
-Because RFM variables have different scales, features are standardized before clustering.
+- **Recent Low-Value Majority**  
+  - large group with low spend and recent activity  
 
-Clustering reveals distinct behavioral groups, including:
-- a high-monetary segment (high-ticket buyers)
-- a repeat-buyer segment
-- low-value majority segments (recent vs dormant)
+- **Dormant Customers**  
+  - high recency (inactive for long periods)  
+  → likely churned  
 
-This segmentation enables cluster-specific marketing and retention strategy.
-
----
-
-### 3) High-Value Customer Prediction (Logistic Regression)  
-Segmentation explains *what groups exist*, but businesses often need to predict who is likely to become high-value.
-
-This project:
-- defines the highest monetary cluster as "high value"
-- trains logistic regression to predict high-value customers using RFM signals
-- interprets coefficients as business drivers
+This shows that “high value” is not one-dimensional and requires different strategies by segment.
 
 ---
 
-## Key Insights  
-- Marketplace customer value is highly imbalanced: most customers purchase once, while a small segment drives revenue.  
-- Clustering uncovers distinct segments with different business strategies (VIP protection vs repeat conversion vs win-back).  
-- Monetary is the strongest driver of high-value classification; recency matters; frequency adds nuance once spend is controlled.  
+## High-Value Customer Prediction
+
+To operationalize segmentation, the highest-value cluster is defined as the “high-value” class.
+
+A logistic regression model is trained using RFM features to identify similar customers.
+
+### Key Drivers
+
+- **Monetary (strong positive effect)** → higher spend strongly increases high-value probability  
+- **Recency (negative effect)** → less recent activity reduces value probability  
+- **Frequency (context-dependent)** → adds nuance once spend is controlled  
+
+The model is used for **interpretation and prioritization**, not as a production prediction system.
 
 ---
 
-## Insight → Action Translation  
-This workflow supports real business programs such as:
-- identifying VIP high-ticket customers for premium CX and retention  
-- prioritizing cross-sell and upsell for high-monetary buyers  
-- reactivating dormant customers with controlled-cost win-back campaigns  
-- using model scores to focus marketing resources on top-value cohorts  
+## Business Takeaways
+
+This workflow enables:
+
+- **VIP protection strategies** for high-spend customers  
+- **LTV growth programs** for repeat buyers  
+- **Win-back campaigns** for dormant customers  
+
+Instead of treating all customers equally, teams can allocate resources based on customer value segments.
 
 ---
 
-## Tools & Techniques  
-- Python (Pandas, NumPy)  
-- Feature engineering (RFM)  
-- KMeans clustering + StandardScaler  
-- Logistic Regression (interpretable classification)  
-- Model interpretation via coefficients  
+## Dataset
+
+This project uses the Olist e-commerce dataset, combining multiple tables:
+
+- `orders`  
+- `payments`  
+- `customers`  
+
+The data is transformed into a clean customer-level dataset for analysis.
+
+---
+
+## Tools
+
+- Python  
+- Pandas  
+- NumPy  
+- Scikit-learn (KMeans, Logistic Regression)  
+- Jupyter Notebook  
